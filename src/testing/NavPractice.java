@@ -8,30 +8,34 @@ package testing;
 
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
-//import lejos.robotics.navigation.Navigator;
+import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.localization.OdometryPoseProvider;
 import lejos.robotics.navigation.Pose;
-import lejos.util.Delay;
 
 public class NavPractice {
 	static float diameter = 1.95f, width = 4.875f;
-	static int speed, angle, delay = 500;
+	static int speed = 100;
 	static DifferentialPilot pilot = new DifferentialPilot(diameter, width, Motor.B, Motor.C, true);
 	static OdometryPoseProvider pose = new OdometryPoseProvider(pilot);
 	static Pose current = new Pose();
+	static Navigator nav = new Navigator(pilot);
 	
-	public static void go(int speed, int angle)	{
+	public static void setNavigatorPath(int distance)	{
+		nav.addWaypoint(distance, 0);
+		nav.addWaypoint(0, -distance);
+		nav.addWaypoint(-distance, 0);
+		nav.addWaypoint(0, distance);
+		nav.addWaypoint(0, 0, 0);
+	}
+	
+	public static void goRotate(int angle)	{
 		pose.setPose(current);
-		pilot.setTravelSpeed(speed);
 		pilot.rotate(angle);
-		//Delay.msDelay(delay);
 		NavPractice.printCurrentPose();
 		pilot.steer(100, -180);
-		//Delay.msDelay(delay);
 		NavPractice.printCurrentPose();
 		pilot.rotate(angle);
-		//Delay.msDelay(delay);
 		NavPractice.printCurrentPose();
 		return;
 	}
@@ -46,8 +50,11 @@ public class NavPractice {
 
 	public static void main(String[] args)	{
 		pilot.addMoveListener(pose);
+		pilot.setTravelSpeed(speed);
 		Button.waitForAnyPress();
-		NavPractice.go(100, 90);
+		//NavPractice.goRotate(90);
+		NavPractice.setNavigatorPath(10);
+		nav.followPath();
 		Button.waitForAnyPress();
 	}
 }
