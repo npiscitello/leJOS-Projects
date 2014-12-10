@@ -20,10 +20,13 @@ public class NavPractice {
 	public static void go(int speed, int angle)	{
 		pilot.setTravelSpeed(speed);
 		pilot.rotate(angle);
+		pilot.steer(100, -180);
+		pilot.rotate(angle);
 	}
 
 	public static void main(String[] args)	{
+		
 		Button.waitForAnyPress();
-		NavPractice.go(1, 90);
+		NavPractice.go(100, 90);
 	}
 }
